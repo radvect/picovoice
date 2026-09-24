@@ -2,7 +2,7 @@ from typing import Sequence
 import trie
 
 
-trie = trie.PrefixTree()
+trie = trie.PrefixTree() #initilizing tree(structure was taken from a neetcode problem)
 
 trie.insert(["AE", "B", "AH", "K", "AH", "S"], "ABACUS")
 trie.insert(["B", "UH", "K"], "BOOK")
@@ -20,21 +20,21 @@ def find_word_combos_with_pronunciation(phonemes: Sequence[str]) -> Sequence[Seq
 
     def backtracking(start):
 
-        if (start == len(phonemes)):
+        if (start == len(phonemes)): ###once we went through the all options of phonemes and the words are valid
             res.append(path.copy())
             return
 
         current = trie.root
-        for i in range(start ,len(phonemes)):
+        for i in range(start ,len(phonemes)): 
 
             if(phonemes[i] not in current.children):
-                break
+                break 
             current = current.children[phonemes[i]]
-            if(current.isEnd==True):
+            if(current.isEnd==True): #check whether we reached the final point of the word
 
-                for word in current.words:
+                for word in current.words: #going over different phonemic interpretation
                     path.append(word)
-                    backtracking(i + 1)
+                    backtracking(i + 1) # starting searching for a new word
                     path.pop()
 
             
