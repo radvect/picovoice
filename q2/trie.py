@@ -19,7 +19,7 @@ class PrefixTree:
                 current.children[phoneme] = new
                 current = current.children[phoneme]
         current.isEnd=True
-        current.word = word   
+        current.words.append(word)   
 
     def search(self, word: str) -> bool:
         current = self.root
@@ -30,7 +30,7 @@ class PrefixTree:
             else:
                 return False
         
-        return  current.isEnd
+        return current.isEnd
 
     # def startsWith(self, prefix: str) -> bool:
     #     current = self.root
@@ -47,4 +47,4 @@ class TrieNode:
         self.children = dict()
         self.isEnd = False
         self.phoeneme = phoeneme
-        self.word = None
+        self.words = []

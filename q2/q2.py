@@ -19,22 +19,34 @@ def find_word_combos_with_pronunciation(phonemes: Sequence[str]) -> Sequence[Seq
     path = []
 
     def backtracking(start):
+
         if (start == len(phonemes)):
             res.append(path.copy())
             return
 
-
+        current = trie.root
         for i in range(start ,len(phonemes)):
-             = phonemes[start:i+1]
-            
-            
-                path.append(phonemes[i])
-            
 
-            backtracking(i+1)
-            path.pop()
+            if(phonemes[i] not in current.children):
+                break
+            current = current.children[phonemes[i]]
+            if(current.isEnd==True):
 
+                for word in current.words:
+                    path.append(word)
+                    backtracking(i + 1)
+                    path.pop()
+
+            
 
     backtracking(0)
 
     return res 
+
+
+print(find_word_combos_with_pronunciation(["DH", "EH", "R", "DH", "EH", "R"]))
+print(find_word_combos_with_pronunciation(["DH", "EH", "R", "B", "UH", "K"]))
+print(find_word_combos_with_pronunciation([ "B", "UH", "K","DH", "EH", "R",]))
+print(find_word_combos_with_pronunciation(["T", "AH", "M", "EY", "T", "OW","B", "UH", "K"] ))
+print(find_word_combos_with_pronunciation(["T", "AH", "M", "EY", "T", "OW","B", "UH", "K", "T", "AH", "M", "AA", "T", "OW"] ))
+print(find_word_combos_with_pronunciation(["DH", "EH", "R", "DH", "EH", "R", "DH", "EH", "R"]))
