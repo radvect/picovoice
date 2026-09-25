@@ -1,0 +1,9 @@
+*.exe
+*.out
+*.o
+*.obj
+
+#shakespear.txt
+.vscode/
+.idea/
+.clangd
