@@ -1,3 +1,4 @@
+#include <cstdlib>
 #define _GNU_SOURCE
 
 
@@ -13,11 +14,16 @@ struct HASH_ITEM {
     UT_hash_handle hh;    
 };
 
-int by_id(const struct HASH_ITEM *a, const struct HASH_ITEM *b) {
-    return -(a->count - b->count);
+// int by_id(const struct HASH_ITEM *a, const struct HASH_ITEM *b) {
+//     return -(a->count - b->count);
+// } for sorting HASH function - updated to heap option
+
+int by_count(const void *a, const void *b) {
+    struct HASH_ITEM *x = *(struct HASH_ITEM **)a;
+    struct HASH_ITEM *y = *(struct HASH_ITEM **)b;
+
+    return y->count - x->count;
 }
-
-
 
 
 void line_to_hash(char* line, struct HASH_ITEM **table ){    
@@ -84,14 +90,10 @@ void file_to_hash(FILE *file, struct HASH_ITEM ** table){
         line_to_hash(line_prep, table);
     }
 
-    HASH_SORT(*table, by_id);
-
+    //HASH_SORT(*table, by_id); an  old solution - we can reduce complexity from len(words)log(len(words)) to len(words)log n
+    // assuming that the small n are passed to the function
 
 }
-
-
-
-
 
 
 
@@ -102,16 +104,42 @@ char **find_frequent_words(const char *path, int32_t n){
     int i =0;
     struct HASH_ITEM *s = hash_table;
     
+    // char** res = malloc(sizeof(char * )*n) ;
+
+    // while(s !=NULL && i<n){
+    //     res[i] = strdup(s->word);
+    //     i++;
+    //     s = s->hh.next;
+    // }
+    // for (int i = 0; i<n; i++){
+    //     printf("%s ", res[i]);
+    // }   
     char** res = malloc(sizeof(char * )*n) ;
 
-    while(s !=NULL && i<n){
-        res[i] = strdup(s->word);
-        i++;
-        s = s->hh.next;
+
+    struct HASH_ITEM ** min_heap = malloc(sizeof(struct HASH_ITEM *)*n);
+    int min_heap_size= 0 ;
+    
+
+    for (s = hash_table; s != NULL; s = s->hh.next) {
+        if(min_heap_size<n){
+            min_heap[min_heap_size] = s;
+            min_heap_size++;
+            heapify_up(min_heap, min_heap_size - 1);
+        }
+        else if(min_heap[0]->count < s->count){
+            min_heap[0] = s;
+            heapify_down(min_heap, min_heap_size, 0);
+        }
     }
-    for (int i = 0; i<n; i++){
-        printf("%s ", res[i]);
-    }   
+    qsort(min_heap, min_heap_size,
+        sizeof(struct HASH_ITEM *),
+        by_count);
+    for (int i = 0; i < min_heap_size; i++) {
+        res[i] = strdup(min_heap[i]->word);
+    }
+        
+    free(min_heap);
 
     return res;
 }
