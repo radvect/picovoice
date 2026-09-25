@@ -7,3 +7,6 @@
 .vscode/
 .idea/
 .clangd
+
+__pycache__/
+*.py[cod]
